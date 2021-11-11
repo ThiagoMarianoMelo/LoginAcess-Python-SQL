@@ -37,8 +37,25 @@ PasswordLabel.place(x=20,y=150)
 PasswordEntry = Entry(RightFrame, width=20,show="*")
 PasswordEntry.place(x=150, y=158)
 
+#funcao do bota login
+def Login():
+
+    UserLogin = UserEntry.get()
+    PasswordLogin = PasswordEntry.get()
+
+    DataBaser.cursor.execute("""
+    SELECT USER,PASSWORD FROM Users
+    WHERE User = ? and Password = ?
+    """, (UserLogin, PasswordLogin))
+    VerifyLogin = DataBaser.cursor.fetchone()
+    try:
+        if UserLogin in VerifyLogin and PasswordLogin in VerifyLogin:
+            messagebox.showinfo(title="Login Info",message="login performed")
+    except:
+        messagebox.showerror(title="Login Info",message="Login failed")
+
 #criacao de botao login
-LoginButton = ttk.Button(RightFrame,text="login",width=10)
+LoginButton = ttk.Button(RightFrame,text="login",width=10,command=Login)
 LoginButton.place(x=200,y=220)
 
 #funcao do botao registrar
@@ -58,26 +75,37 @@ def Register():
     NameEntry.place(x=150,y=60)
 
     RegisterUserLabel = Label(RightFrame, text="Username: ", font=("Arial", 17), bg="MIDNIGHTBLUE", fg="White")
-    RegisterUserLabel.place(x=20, y=110)
+    RegisterUserLabel.place(x=20, y=140)
     RegisterUserEntry = Entry(RightFrame, width=20)
-    RegisterUserEntry.place(x=150, y=118)
+    RegisterUserEntry.place(x=150, y=148)
 
     RegisterPasswordLabel = Label(RightFrame, text="Password: ", font=("Arial", 17), bg="MIDNIGHTBLUE", fg="White")
-    RegisterPasswordLabel.place(x=20, y=170)
+    RegisterPasswordLabel.place(x=20, y=180)
     RegisterPasswordEntry = Entry(RightFrame, width=20,show="*")
-    RegisterPasswordEntry.place(x=150, y=178)
+    RegisterPasswordEntry.place(x=150, y=188)
+
+    EmailLabel = Label(RightFrame,text="Email: ",font=("Arial",17), bg="MIDNIGHTBLUE",fg="White")
+    EmailLabel.place(x=30,y=95)
+    EmailEntry = Entry(RightFrame,width=20)
+    EmailEntry.place(x=150,y=103)
 
 
     #criacao dos botoes
     def RegisterToDataBase():
         Name = NameEntry.get()
+        Email = EmailEntry.get()
         User = RegisterUserEntry.get()
         Password = RegisterPasswordEntry.get()
-        DataBaser.cursor.execute("""
-        INSERT INTO Users (Name,User,Password) VALUES(?, ?, ?)
-           """,(Name, User, Password))
-        DataBaser.conn.commit()
-        messagebox.showinfo(title="Register Info",message="Successful Register")
+
+        #verificando se todos os dados foram preenchidos
+        if Name == "" or Email == "" or User == "" or Password == "" :
+            messagebox.showerror(title="Register Error", message="Fill all the fields")
+        else:
+            DataBaser.cursor.execute("""
+            INSERT INTO Users (Name,Email,User,Password) VALUES(?, ?, ?,?)
+               """,(Name,Email, User, Password))
+            DataBaser.conn.commit()
+            messagebox.showinfo(title="Register Info",message="Successful Register")
 
     #criacao dos botoes da area de registro
     TrueRegisterButtom = ttk.Button(RightFrame,text="Register",width=10,command=RegisterToDataBase)
@@ -87,13 +115,14 @@ def Register():
     def BackToLogin():
         Name.place(x=99999)
         NameEntry.place(x=99999)
-        UserEntry.place(x=99999)
         RegisterUserEntry.place(x=999999)
         RegisterPasswordLabel.place(x=9999999)
         RegisterUserLabel.place(x=999999)
         RegisterPasswordEntry.place(x=999999)
         TrueRegisterButtom.place(x=99999)
         BackButtom.place(x=999999)
+        EmailEntry.place(x=99999)
+        EmailLabel.place(x=99999)
 
         UserLabel.place(x=20, y=100)
         UserEntry.place(x=150, y=105)
