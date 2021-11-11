@@ -17,10 +17,4 @@ CREATE TABLE IF NOT EXISTS Users(
 );
 """)
 
-cursor.execute("""
-DELETE FROM Users
-WHERE ID = '1'
-""")
-
-
 print("conexao ok")
